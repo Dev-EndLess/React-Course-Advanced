@@ -1,10 +1,11 @@
 import React, { createContext, useEffect, useState } from "react";
+
 const Context = createContext();
 
-function ContextProvider(props) {
-  const [allPhotos, setAllPhotos] = useState([]);
-  const [cartItems, setCartItems] = useState([]);
-  const [isInCart, setIsInCart] = useState(false);
+function ContextProvider({ children }) {
+  const [allPhotos, setAllPhotos] = useState([])
+  const [cartItems, setCartItems] = useState([])
+  const [isInCart, setIsInCart] = useState(false)
 
   //   {
   //     "url": "https://github.com/bobziroll/scrimba-react-bootcamp-images/blob/master/pic1.jpg?raw=true",
@@ -23,37 +24,32 @@ function ContextProvider(props) {
     getPhotos();
   }, []);
 
-  function toggleFavorite(id) {
-    setAllPhotos((prevPhotos) =>
-      prevPhotos.map((photo) => {
-        return photo.id === id
-          ? { ...photo, isFavorite: !photo.isFavorite }
-          : photo;
-      })
-    );
+  const toggleFavorite = (id) => {
+    setAllPhotos(prevState => prevState.map(photo => {
+      return photo.id === id ? 
+        {...photo, isFavorite: !photo.isFavorite} 
+        : photo
+    }))
   }
 
-  function addToCart(photo) {
-    setCartItems((prevPhoto) => [...prevPhoto, photo]);
+  const addToCart = (newItem) => {
+    setCartItems(prevItems => [...prevItems, newItem])
   }
-  console.log(cartItems);
 
-  function toggleIcon() {}
+  const removeFromCart = (id) => {
+    setCartItems(prevItem => prevItem.filter(item => item.id !== id))
+  }
+
+  function emptyCart() {
+    setCartItems([])
+  }
 
   return (
-    <Context.Provider
-      value={{
-        allPhotos,
-        toggleFavorite,
-        cartItems,
-        addToCart,
-        isInCart,
-        toggleIcon,
-      }}
-    >
-      {props.children}
+    <Context.Provider value={{ allPhotos, toggleFavorite, addToCart, removeFromCart, cartItems, isInCart, emptyCart }}>
+      {children}
     </Context.Provider>
   );
 }
 
 export { ContextProvider, Context };
+
