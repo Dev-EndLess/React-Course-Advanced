@@ -1,52 +1,48 @@
-import React from "react";
-import { PropTypes } from "prop-types";
-import { useState, useContext } from "react";
-import { Context } from "../Context";
+import React, { useState, useContext } from "react";
+import PropTypes from "prop-types"
+import { Context } from "../Context"
 
-function Image(props) {
-  const { toggleFavorite, addToCart, toggleIcon, isInCart, cartItems } =
-    useContext(Context);
+function Image({ className, img }) {
+  const {toggleFavorite, addToCart, removeFromCart, cartItems, isInCart} = useContext(Context)
   const [isHovered, setIsHovered] = useState(false);
 
-  const heartIcon = isHovered && (
-    <i className={props.img.isFavorite
-        ? "ri-heart-fill favorite" 
-        : "ri-heart-line favorite"
-      }
-      onClick={() => toggleFavorite(props.img.id)}>
-    </i>
-  )
+  const heartIcon = () => {
+    if (img.isFavorite) {
+      return <i className="ri-heart-fill favorite" onClick={() => toggleFavorite(img.id)}></i>
+    } else if (isHovered) {
+      return <i className="ri-heart-line favorite" onClick={() => toggleFavorite(img.id)}></i>
+    }
+  }
 
-  const cartIcon = isHovered && (
-    <i className={isInCart 
-        ? "ri-shopping-cart-fill cart" 
-        : "ri-add-circle-line cart"
-      }
-      onClick={() => {addToCart(props.img);toggleIcon();
-      }}>
-    </i>
-  );
+ const cartIcon = () => {
+  const alreadyInCart = cartItems.some(item => item.id === img.id)
+  if (alreadyInCart) {
+    return <i className="ri-shopping-cart-fill cart" onClick={() => removeFromCart(img.id)}></i>
+  } else if (isHovered) {
+    return <i className="ri-add-circle-line cart" onClick={() => addToCart(img)}></i>
+  }
+ }
 
   return (
     <div
-      className={`${props.className} image-container`}
+      className={`${className} image-container`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      >
-      <img src={props.img.url} className="image-grid" />
-      {heartIcon}
-      {cartIcon}
+    >
+      <img src={img.url} className="image-grid" />
+      {heartIcon()}
+      {cartIcon()}
     </div>
   );
 }
 
-Image.defaultProps = {
+Image.propTypes = {
   className: PropTypes.string,
   img: PropTypes.shape({
     id: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
-    isFavorite: PropTypes.bool,
-  }),
-};
+    isFavorite: PropTypes.bool.isRequired
+  })
+}
 
 export default Image;
