@@ -13,9 +13,10 @@ function CartItem({item}) {
       <p>5.99 $</p>
       <i 
       className={iconClassname}
-      onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)} 
-      onClick={() => removeFromCart(item.id)}></i>
+      onMouseEnter={() => setIsHovered(true)}
+      onClick={() => removeFromCart(item.id)}>
+      </i>
     </div>
   )
 }
